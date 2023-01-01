@@ -32,7 +32,26 @@ export default function (/* { store, ssrContext } */) {
 Vue.mixin({
   data() {
     return {
-      serverPath: "http://localhost:8080/"
+      serverPath: "http://localhost:8080/",
+      apiPath: "http://localhost/ssms_bo_api/"
     }
+  },
+  methods: {
+    greenNotify(text) {
+      this.$q.notify({
+        message: text,
+        color: "positive",
+        position: "top",
+        icon: "fas fa-check-circle",
+      });
+    },
+    redNotify(text) {
+      this.$q.notify({
+        message: text,
+        color: "negative",
+        position: "top",
+        icon: "fas fa-times-circle",
+      });
+    },
   },
 })

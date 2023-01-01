@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
@@ -55,6 +56,20 @@ export default {
   methods: {
     loginBtn() {
       this.$router.push("mainmenu");
+    },
+    async loginBtn() {
+      if (this.input.username.length == 0 || this.input.password.length == 0) {
+        this.redNotify("Please input username/password");
+        return;
+      }
+      let url = this.apiPath + "login.php";
+      let res = await axios.post(url, JSON.stringify(this.input));
+      if (res.data == "Not pass") {
+        this.redNotify("Username/password incorrect");
+        return;
+      }
+      this.$q.localStorage.set("keypass", res.data);
+      this.$router.push("/mainmenu");
     },
   },
 };

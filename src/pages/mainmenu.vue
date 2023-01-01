@@ -5,7 +5,7 @@
         <img src="../../public/image/favicon.svg" alt="" />
       </div>
       <div class="titlePro col">Bridge Health Monitoring System</div>
-      <div class="filterTypeDiv row justify-center">
+      <div class="filterTypeDiv row justify-center q-pt-xs">
         <q-select
           v-model="projectType"
           :options="projectList"
@@ -14,6 +14,21 @@
           class="projectTypeSel"
           @input="selectType"
         />
+      </div>
+      <div class="q-pr-sm q-pt-sm">
+        <q-btn color="secondary" label="Admin">
+          <q-menu>
+            <q-list style="min-width: 100px">
+              <q-item clickable>
+                <q-item-section>User</q-item-section>
+              </q-item>
+              <q-separator />
+              <q-item clickable>
+                <q-item-section>Log out</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
       </div>
     </div>
     <div>
@@ -145,6 +160,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
@@ -268,8 +284,21 @@ export default {
     goDetail(id) {
       this.$router.push("/info/" + id);
     },
+    async checkHashKey() {
+      let keyHash = this.$q.localStorage.getItem("keypass");
+      let url = this.apiPath + "checkhashkey.php";
+      let temp = {
+        hashkey: keyHash,
+      };
+      let res = await axios.post(url, JSON.stringify(temp));
+      if (res.data == "Not pass") {
+        this.$q.localStorage.clear();
+        this.$router.push("/");
+      }
+    },
   },
   mounted() {
+    this.checkHashKey();
     this.setData();
   },
 };
@@ -295,7 +324,7 @@ export default {
   height: 100vh;
 }
 .topBar {
-  height: 40px;
+  height: 50px;
   background-color: #585858;
 }
 .titlePro {
@@ -306,7 +335,6 @@ export default {
 }
 .filterTypeDiv {
   width: 200px;
-  background-color: white;
 }
 .projectTypeSel {
   width: 160px;
