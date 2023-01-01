@@ -71,6 +71,20 @@ export default {
       this.$q.localStorage.set("keypass", res.data);
       this.$router.push("/mainmenu");
     },
+    async redirect() {
+      let keyHash = this.$q.localStorage.getItem("keypass");
+      let url = this.apiPath + "checkhashkey.php";
+      let temp = {
+        hashkey: keyHash,
+      };
+      let res = await axios.post(url, JSON.stringify(temp));
+      if (res.data == "pass") {
+        this.$router.push("/mainmenu");
+      }
+    },
+  },
+  mounted() {
+    this.redirect();
   },
 };
 </script>

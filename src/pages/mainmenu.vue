@@ -324,7 +324,7 @@ export default {
   height: 100vh;
 }
 .topBar {
-  height: 50px;
+  height: 45px;
   background-color: #585858;
 }
 .titlePro {
