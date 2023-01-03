@@ -234,8 +234,16 @@
                   :class="{ zebraLine: index % 2 }"
                 >
                   <div class="col-8 q-pl-md">{{ item.username }}</div>
-                  <div class="col-2 textCenter cursor-pointer"><u>Edit</u></div>
-                  <div class="col-2 textCenter cursor-pointer">
+                  <div
+                    class="col-2 textCenter cursor-pointer"
+                    @click="editUserBtn(item.id)"
+                  >
+                    <u>Edit</u>
+                  </div>
+                  <div
+                    class="col-2 textCenter cursor-pointer"
+                    @click="delUserBtn(item.id)"
+                  >
                     <u>Delete</u>
                   </div>
                 </div>
@@ -308,6 +316,95 @@
         </div>
       </q-card>
     </q-dialog>
+
+    <!-- User edit dialog -->
+    <q-dialog v-model="editUserDia" persistent transition-hide="flip-down">
+      <q-card class="addUserDia">
+        <div class="row">
+          <div style="width: 300px">
+            <img src="../../public/image/user03.jpg" alt="" />
+          </div>
+          <div class="col">
+            <div class="font24 q-pa-md">Edit user</div>
+            <div class="q-px-md">
+              <div class="row">
+                <div class="col-3 q-pt-md">
+                  <div>username</div>
+                  <div class="font10">at least 3 letters</div>
+                </div>
+                <div class="col-7">
+                  <q-input v-model="userEdit.username" readonly dense />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-3 q-pt-md">
+                  <div>password</div>
+                  <div class="font10">at least 4 letters</div>
+                </div>
+                <div class="col-7">
+                  <q-input v-model="userEdit.password" dense />
+                </div>
+              </div>
+            </div>
+            <div class="row justify-center q-pt-xl">
+              <div>
+                <q-btn
+                  label="Cancel"
+                  outline
+                  no-caps
+                  class="shortBtn"
+                  @click="closeEditUserDiaBtn()"
+                />
+              </div>
+              <div style="width: 30px"></div>
+              <div>
+                <q-btn
+                  label="Save"
+                  class="activeBtn shortBtn"
+                  no-caps
+                  @click="editUserConfirmBtn()"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </q-card>
+    </q-dialog>
+
+    <!-- User delete -->
+    <q-dialog v-model="delUserDia" persistent transition-hide="flip-down">
+      <q-card class="delUserDia">
+        <div class="row">
+          <div style="width: 280px">
+            <img src="../../public/image/del.jpg" alt="" />
+          </div>
+          <div class="col">
+            <div class="font24 q-pa-md">Confirm delete</div>
+            <div class="q-px-md">Do you want to delete this user?</div>
+            <div class="row justify-center q-pt-xl">
+              <div>
+                <q-btn
+                  label="Cancel"
+                  outline
+                  no-caps
+                  class="shortBtn"
+                  @click="closeDelUserDiaBtn()"
+                />
+              </div>
+              <div style="width: 30px"></div>
+              <div>
+                <q-btn
+                  label="Delete"
+                  class="activeBtn shortBtn"
+                  no-caps
+                  @click="delUserConfirmBtn()"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -328,6 +425,14 @@ export default {
         username: "",
         password: "",
       },
+      editUserDia: false,
+      userEdit: {
+        id: 0,
+        username: "",
+        password: "",
+      },
+      delUserDia: false,
+      delUserId: 0,
       //project
       addProjectDia: false,
       input: {
@@ -482,6 +587,51 @@ export default {
         this.closeAddNewUserDiaBtn();
       }
     },
+    editUserBtn(id) {
+      this.userEdit.id = id;
+      this.userDia = false;
+      this.editUserDia = true;
+      this.userEdit.username = this.userData.filter(
+        (x) => x.id == id
+      )[0].username;
+    },
+    closeEditUserDiaBtn() {
+      this.userDia = true;
+      this.editUserDia = false;
+    },
+    async editUserConfirmBtn() {
+      if (this.userEdit.password.length < 4) {
+        this.redNotify("The password must be at least 4 characters.");
+        return;
+      }
+      let url = this.apiPath + "edituser.php";
+      let res = await axios.post(url, JSON.stringify(this.userEdit));
+      if (res.data == "finish") {
+        this.greenNotify("Update complete");
+        this.closeEditUserDiaBtn();
+      }
+    },
+    delUserBtn(id) {
+      this.delUserId = id;
+      this.userDia = false;
+      this.delUserDia = true;
+    },
+    closeDelUserDiaBtn() {
+      this.userDia = true;
+      this.delUserDia = false;
+    },
+    async delUserConfirmBtn() {
+      let url = this.apiPath + "deluser.php";
+      let temp = {
+        delId: this.delUserId,
+      };
+      let res = await axios.post(url, JSON.stringify(temp));
+      if (res.data == "finish") {
+        this.greenNotify("Delete user complete");
+        this.loadUser();
+        this.closeDelUserDiaBtn();
+      }
+    },
     //******** */
     selectType() {
       if (this.projectType == "Active project") {
@@ -568,6 +718,12 @@ export default {
   width: 100%;
   max-width: 800px;
   height: 279px;
+  overflow: hidden;
+}
+.delUserDia {
+  width: 100%;
+  max-width: 625px;
+  height: 210px;
   overflow: hidden;
 }
 //***** */
