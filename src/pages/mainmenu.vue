@@ -4,36 +4,42 @@
       <div class="q-pl-md q-pt-xs">
         <img src="../../public/image/favicon.svg" alt="" />
       </div>
-      <div class="titlePro col">Bridge Health Monitoring System</div>
-      <div class="filterTypeDiv row justify-center q-pt-xs">
+      <div class="titlePro col">Smart Sensor Monitoring System</div>
+      <div class="filterTypeDiv row justify-end q-pt-xs">
+        <q-icon
+          name="fa-solid fa-circle-user"
+          color="white"
+          size="28px"
+          class="q-pt-xs cursor-pointer"
+          v-show="isAdmin"
+          @click="userBtn()"
+        />
+        <q-icon
+          name="fa-solid fa-right-from-bracket"
+          color="white"
+          size="28px"
+          class="q-pt-xs q-px-md cursor-pointer"
+          @click="logoutBtn()"
+        />
+      </div>
+    </div>
+    <div class="picDiv">
+      <div>
+        <img src="../../public/image/banner1.jpg" alt="" width="100%" />
+      </div>
+      <div class="projectTypeDiv">
         <q-select
           v-model="projectType"
           :options="projectList"
-          dense=""
+          dense
+          filled
           bg-color="white"
           class="projectTypeSel"
           @input="selectType"
         />
       </div>
-      <div class="q-pr-sm q-pt-sm">
-        <q-btn color="secondary" label="Admin">
-          <q-menu>
-            <q-list style="min-width: 100px">
-              <q-item clickable>
-                <q-item-section>User</q-item-section>
-              </q-item>
-              <q-separator />
-              <q-item clickable>
-                <q-item-section>Log out</q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </q-btn>
-      </div>
     </div>
-    <div>
-      <img src="../../public/image/banner1.jpg" alt="" width="100%" />
-    </div>
+
     <div class="mainPanel row content-start">
       <div class="col-4 row justify-center box" @click="addProjectBtn">
         <q-card class="projectBox shadow-4 cursor-pointer">
@@ -86,6 +92,8 @@
       </div>
     </div>
     <div class="fullscreen backdrop" v-show="showBackdrop"></div>
+
+    <!-- Add project Dialog -->
     <q-dialog v-model="addProjectDia" persistent>
       <q-card class="addDia">
         <div class="row">
@@ -156,6 +164,150 @@
         </div>
       </q-card>
     </q-dialog>
+
+    <!-- Logout Dialog -->
+    <q-dialog v-model="logoutDia" persistent>
+      <q-card class="logoutDia">
+        <div class="row">
+          <div style="width: 280px">
+            <img src="../../public/image/logout.jpg" alt="" />
+          </div>
+          <div class="col">
+            <div class="font24 q-pa-md">Confirm logout</div>
+            <div class="q-px-md">Do you want to logout this user?</div>
+            <div class="row justify-center q-pt-xl">
+              <div>
+                <q-btn
+                  label="Cancel"
+                  outline
+                  no-caps
+                  class="shortBtn"
+                  @click="closeLogoutDiaBtn()"
+                />
+              </div>
+              <div style="width: 30px"></div>
+              <div>
+                <q-btn
+                  label="Logout"
+                  class="activeBtn shortBtn"
+                  no-caps
+                  @click="logoutConfirmBtn()"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </q-card>
+    </q-dialog>
+
+    <!-- User main dialog -->
+    <q-dialog v-model="userDia" persistent transition-hide="flip-up">
+      <q-card class="userDia">
+        <div class="row">
+          <div style="width: 400px; height: 375px; overflow-y: hidden">
+            <img src="../../public/image/user01.jpg" width="100%" alt="" />
+          </div>
+          <div class="col">
+            <div class="row justify-between q-pa-md">
+              <div class="font24">User</div>
+              <div>
+                <q-btn
+                  icon="fa-solid fa-plus"
+                  round
+                  class="activeBtn"
+                  @click="addNewUserBtn()"
+                />
+              </div>
+            </div>
+            <div class="userMainBlock">
+              <div class="row headTable q-mx-md">
+                <div class="col-8 q-pl-md">Username</div>
+                <div class="col-2 textCenter">Edit</div>
+                <div class="col-2 textCenter">Delete</div>
+              </div>
+              <div class="">
+                <div
+                  class="row q-mx-md"
+                  style="line-height: 30px"
+                  v-for="(item, index) in userData"
+                  :index="index"
+                  :class="{ zebraLine: index % 2 }"
+                >
+                  <div class="col-8 q-pl-md">{{ item.username }}</div>
+                  <div class="col-2 textCenter cursor-pointer"><u>Edit</u></div>
+                  <div class="col-2 textCenter cursor-pointer">
+                    <u>Delete</u>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="textCenter q-pt-sm">
+              <q-btn
+                label="Close"
+                no-caps
+                outline
+                class="longBtn"
+                @click="closeUserBtn()"
+              />
+            </div>
+          </div>
+        </div>
+      </q-card>
+    </q-dialog>
+
+    <!-- User add new dialog -->
+    <q-dialog v-model="addNewUserDia" persistent transition-hide="flip-down">
+      <q-card class="addUserDia">
+        <div class="row">
+          <div style="width: 300px">
+            <img src="../../public/image/user02.jpg" alt="" />
+          </div>
+          <div class="col">
+            <div class="font24 q-pa-md">Add new user</div>
+            <div class="q-px-md">
+              <div class="row">
+                <div class="col-3 q-pt-md">
+                  <div>username</div>
+                  <div class="font10">at least 3 letters</div>
+                </div>
+                <div class="col-7">
+                  <q-input v-model="user.username" dense />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-3 q-pt-md">
+                  <div>password</div>
+                  <div class="font10">at least 4 letters</div>
+                </div>
+                <div class="col-7">
+                  <q-input v-model="user.password" dense />
+                </div>
+              </div>
+            </div>
+            <div class="row justify-center q-pt-xl">
+              <div>
+                <q-btn
+                  label="Cancel"
+                  outline
+                  no-caps
+                  class="shortBtn"
+                  @click="closeAddNewUserDiaBtn()"
+                />
+              </div>
+              <div style="width: 30px"></div>
+              <div>
+                <q-btn
+                  label="Save"
+                  class="activeBtn shortBtn"
+                  no-caps
+                  @click="addNewUserConfirmBtn()"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -164,6 +316,20 @@ import axios from "axios";
 export default {
   data() {
     return {
+      showBackdrop: false,
+      // Logout
+      logoutDia: false,
+      // user management
+      isAdmin: false,
+      userDia: false,
+      userData: [],
+      addNewUserDia: false,
+      user: {
+        username: "",
+        password: "",
+      },
+      //project
+      addProjectDia: false,
       input: {
         projectName: "",
         shorturl: "",
@@ -174,8 +340,7 @@ export default {
         startLogTime: "",
         duration: "",
       },
-      showBackdrop: false,
-      addProjectDia: false,
+
       projectType: "All project",
       projectList: ["All project", "Active project", "Inactive project"],
       dataList: [
@@ -256,6 +421,68 @@ export default {
     };
   },
   methods: {
+    // logout
+    logoutBtn() {
+      this.showBackdrop = true;
+      this.logoutDia = true;
+    },
+    closeLogoutDiaBtn() {
+      this.showBackdrop = false;
+      this.logoutDia = false;
+    },
+    logoutConfirmBtn() {
+      this.$q.localStorage.clear();
+      this.$router.push("/");
+    },
+
+    // user management
+    async loadUser() {
+      let url = this.apiPath + "loaduser.php";
+      let res = await axios.get(url);
+      this.userData = res.data;
+    },
+    userBtn() {
+      this.loadUser();
+      this.showBackdrop = true;
+      this.userDia = true;
+    },
+    closeUserBtn() {
+      this.showBackdrop = false;
+      this.userDia = false;
+    },
+    addNewUserBtn() {
+      this.userDia = false;
+      this.addNewUserDia = true;
+    },
+    closeAddNewUserDiaBtn() {
+      this.userDia = true;
+      this.addNewUserDia = false;
+    },
+    async addNewUserConfirmBtn() {
+      if (this.user.username.length == 0 || this.user.password.length == 0) {
+        this.redNotify("Please input username/password");
+        return;
+      }
+      if (this.user.username.length < 3) {
+        this.redNotify("The username must be at least 3 characters long.");
+        return;
+      }
+      if (this.user.password.length < 4) {
+        this.redNotify("The password must be at least 4 characters long.");
+        return;
+      }
+      let url = this.apiPath + "addnewuser.php";
+      let res = await axios.post(url, JSON.stringify(this.user));
+      if (res.data == "username exists") {
+        this.redNotify("This username already exists.");
+        return;
+      } else {
+        this.greenNotify("Add new user complete.");
+        this.loadUser();
+        this.closeAddNewUserDiaBtn();
+      }
+    },
+    //******** */
     selectType() {
       if (this.projectType == "Active project") {
         this.dataShow = this.dataList.filter((x) => x.type == "active");
@@ -284,6 +511,7 @@ export default {
     goDetail(id) {
       this.$router.push("/info/" + id);
     },
+
     async checkHashKey() {
       let keyHash = this.$q.localStorage.getItem("keypass");
       let url = this.apiPath + "checkhashkey.php";
@@ -294,11 +522,14 @@ export default {
       if (res.data == "Not pass") {
         this.$q.localStorage.clear();
         this.$router.push("/");
+      } else if (res.data == "admin") {
+        this.isAdmin = true;
       }
     },
   },
   mounted() {
     this.checkHashKey();
+
     this.setData();
   },
 };
@@ -308,6 +539,38 @@ export default {
 .backdrop {
   background-color: rgba(0, 0, 0, 0.7);
 }
+
+//logout
+.logoutDia {
+  width: 100%;
+  max-width: 625px;
+  height: 210px;
+  overflow: hidden;
+}
+//** */
+
+// user
+//usermain
+.userDia {
+  width: 100%;
+  max-width: 900px;
+  height: 375px;
+}
+.userMainBlock {
+  width: 100%;
+  height: 240px;
+  overflow-y: auto;
+}
+.headTable {
+  line-height: 35px;
+}
+.addUserDia {
+  width: 100%;
+  max-width: 800px;
+  height: 279px;
+  overflow: hidden;
+}
+//***** */
 .rowinput {
   height: 45px;
 }
@@ -330,7 +593,7 @@ export default {
 .titlePro {
   color: white;
   font-size: 18px;
-  padding-top: 5px;
+  padding-top: 7px;
   padding-left: 10px;
 }
 .filterTypeDiv {
@@ -338,6 +601,15 @@ export default {
 }
 .projectTypeSel {
   width: 160px;
+}
+.picDiv {
+  position: relative;
+}
+.projectTypeDiv {
+  position: absolute;
+  padding: 20px;
+  right: 0px;
+  top: 0px;
 }
 .mainPanel {
   width: 1000px;

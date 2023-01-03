@@ -1,7 +1,7 @@
 // app global css in SCSS form
 body{
     background-color: grey;
-    color: #282828
+    color: #373737
 }
 .brx{
     border: 1px red solid;
@@ -31,6 +31,30 @@ body{
   .font24{
     font-size:24px;
   }
+  .font10{
+    font-size: 10px;
+    color:#837F7F
+
+  }
   .backdrop {
     background-color: rgba(0, 0, 0, 0.7);
   }
+ .activeBtn{
+  background-color: #287377;
+  color:white;
+ }
+ .shortBtn{
+  width: 120px
+ }
+ .longBtn{
+  width: 160px
+ }
+ .headTable{
+  background-color: rgba(40,115,119,0.2);
+ }
+ .textCenter{
+  text-align: center;
+ }
+ .zebraLine{
+  background-color: rgba(221,221,221,0.4);
+ }

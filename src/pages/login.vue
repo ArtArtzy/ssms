@@ -130,7 +130,7 @@ export default {
 .titlePro {
   color: white;
   font-size: 18px;
-  padding-top: 5px;
+  padding-top: 7px;
   padding-left: 10px;
 }
 .footer {
