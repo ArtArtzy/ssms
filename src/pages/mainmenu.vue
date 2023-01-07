@@ -62,28 +62,25 @@
           class="projectBox shadow-4 cursor-pointer"
           @click="goDetail(item.id)"
         >
-          <div class="projectName">{{ item.project }}</div>
+          <div class="projectName">{{ item.name }}</div>
           <div class="shorturl fontgrey">{{ item.shortURL }}</div>
           <div class="row lastLine justify-between">
-            <div class="fontgrey">{{ item.date }}</div>
+            <div class="fontgrey">{{ item.loggingDate }}</div>
             <div class="row" style="width: 80px">
               <div>
                 <q-icon
                   name="fa-solid fa-lock fontgrey"
-                  v-show="item.password"
+                  v-show="item.isPassword == 1"
                 ></q-icon>
                 <q-icon
                   name="fa-solid fa-lock-open fontgrey"
-                  v-show="!item.password"
+                  v-show="item.isPassword != 1"
                 ></q-icon>
               </div>
-              <div class="q-pl-sm activeText" v-show="item.type == 'active'">
+              <div class="q-pl-sm activeText" v-show="item.active == 1">
                 Active
               </div>
-              <div
-                class="q-pl-sm inactiveText"
-                v-show="item.type == 'inactive'"
-              >
+              <div class="q-pl-sm inactiveText" v-show="item.active == 0">
                 Inactive
               </div>
             </div>
@@ -102,7 +99,6 @@
           </div>
           <div class="col q-pa-md">
             <div class="font24">Add project</div>
-            <hr />
             <div class="row rowinput">
               <div class="col-4 q-pt-md">Project name:</div>
               <div class="col q-pr-md">
@@ -110,9 +106,22 @@
               </div>
             </div>
             <div class="row rowinput">
-              <div class="col-4 q-pt-md">Short URL:</div>
+              <div class="col-4 q-pt-md">
+                <div>Short URL:</div>
+                <div class="font10">small letters no space</div>
+              </div>
               <div class="col q-pr-md">
                 <q-input v-model="input.shorturl" dense />
+              </div>
+            </div>
+            <div class="row rowinput">
+              <div class="col-4 q-pt-md">Address:</div>
+              <div class="col q-pr-md">
+                <q-input
+                  v-model="input.address"
+                  dense
+                  placeholder="EXAMPLE: Bangkok 11400"
+                />
               </div>
             </div>
             <div class="row rowinput">
@@ -120,25 +129,41 @@
                 <q-checkbox v-model="input.isPassword" dense label="Password" />
               </div>
               <div class="col q-pr-md">
-                <q-input v-model="input.shorturl" dense />
+                <q-input
+                  v-model="input.password"
+                  dense
+                  v-show="input.isPassword"
+                />
               </div>
             </div>
             <div class="row rowinput">
               <div class="col-4 q-pt-md">Start logging Date</div>
               <div class="col q-pr-md">
-                <q-input v-model="input.startLogDate" dense />
+                <q-input
+                  v-model="input.startLogDate"
+                  dense
+                  placeholder="EXAMPLE: 01/11/2022"
+                />
               </div>
             </div>
             <div class="row rowinput">
               <div class="col-4 q-pt-md">Start logging Time</div>
               <div class="col q-pr-md">
-                <q-input v-model="input.startLogTime" dense />
+                <q-input
+                  v-model="input.startLogTime"
+                  dense
+                  placeholder="EXAMPLE: 20:30"
+                />
               </div>
             </div>
             <div class="row rowinput">
-              <div class="col-4 q-pt-md">Duration</div>
+              <div class="col-4 q-pt-md">Duration (sec)</div>
               <div class="col q-pr-md">
-                <q-input v-model="input.duration" dense />
+                <q-input
+                  v-model="input.duration"
+                  dense
+                  placeholder="EXAMPLE: 3600"
+                />
               </div>
             </div>
             <div class="row justify-center q-pt-md">
@@ -448,80 +473,7 @@ export default {
 
       projectType: "All project",
       projectList: ["All project", "Active project", "Inactive project"],
-      dataList: [
-        {
-          id: 1,
-          project: "Param5 bridge",
-          shortURL: "Param5",
-          date: "July 2022",
-          password: true,
-          type: "active",
-        },
-        {
-          id: 2,
-          project: "Param7 bridge",
-          shortURL: "Param7",
-          date: "Feb 2022",
-          password: false,
-          type: "inactive",
-        },
-        {
-          id: 3,
-          project: "Param9 bridge",
-          shortURL: "Param9",
-          date: "July 2022",
-          password: true,
-          type: "active",
-        },
-        {
-          id: 1,
-          project: "Param5 bridge",
-          shortURL: "Param5",
-          date: "July 2022",
-          password: true,
-          type: "active",
-        },
-        {
-          id: 2,
-          project: "Param7 bridge",
-          shortURL: "Param7",
-          date: "Feb 2022",
-          password: true,
-          type: "inactive",
-        },
-        {
-          id: 3,
-          project: "Param9 bridge",
-          shortURL: "Param9",
-          date: "July 2022",
-          password: true,
-          type: "active",
-        },
-        {
-          id: 1,
-          project: "Param5 bridge",
-          shortURL: "Param5",
-          date: "July 2022",
-          password: true,
-          type: "active",
-        },
-        {
-          id: 2,
-          project: "Param7 bridge",
-          shortURL: "Param7",
-          date: "Feb 2022",
-          password: true,
-          type: "inactive",
-        },
-        {
-          id: 3,
-          project: "Param9 bridge",
-          shortURL: "Param9",
-          date: "July 2022",
-          password: true,
-          type: "active",
-        },
-      ],
+      dataList: [],
       dataShow: [],
     };
   },
@@ -635,12 +587,19 @@ export default {
     //******** */
     selectType() {
       if (this.projectType == "Active project") {
-        this.dataShow = this.dataList.filter((x) => x.type == "active");
+        this.dataShow = this.dataList.filter((x) => x.active == 1);
       } else if (this.projectType == "Inactive project") {
-        this.dataShow = this.dataList.filter((x) => x.type == "inactive");
+        this.dataShow = this.dataList.filter((x) => x.active == 0);
       } else {
         this.dataShow = this.dataList;
       }
+    },
+    async loadProjectData() {
+      let url = this.apiPath + "loadproject.php";
+      let res = await axios.get(url);
+      this.dataList = res.data;
+      this.setData();
+      this.projectType = "All project";
     },
     setData() {
       this.dataShow = this.dataList;
@@ -648,15 +607,39 @@ export default {
     addProjectBtn() {
       this.showBackdrop = true;
       this.addProjectDia = true;
+      this.input.projectName = "";
+      this.input.shorturl = "";
+      this.input.isPassword = true;
+      this.input.password = "";
+      this.input.address = "";
+      this.input.startLogDate = "";
+      this.input.startLogTime = "";
+      this.input.duration = "";
     },
     closeAddDia() {
       this.showBackdrop = false;
       this.addProjectDia = false;
     },
-    saveAddDia() {
-      console.log("save add new project");
-      this.showBackdrop = false;
-      this.addProjectDia = false;
+    async saveAddDia() {
+      if (
+        this.input.projectName.length == 0 ||
+        this.input.shorturl.length == 0 ||
+        this.input.address.length == 0 ||
+        this.input.startLogDate.length == 0 ||
+        this.input.startLogTime.length == 0 ||
+        this.input.duration.length == 0
+      ) {
+        this.redNotify("Please input all fields!");
+        return;
+      }
+      let url = this.apiPath + "addProject.php";
+      let res = await axios.post(url, JSON.stringify(this.input));
+      if (res.data == "finish") {
+        this.greenNotify("Add new projectt completely");
+        this.loadProjectData();
+        this.showBackdrop = false;
+        this.addProjectDia = false;
+      }
     },
     goDetail(id) {
       this.$router.push("/info/" + id);
@@ -679,8 +662,7 @@ export default {
   },
   mounted() {
     this.checkHashKey();
-
-    this.setData();
+    this.loadProjectData();
   },
 };
 </script>
@@ -733,7 +715,7 @@ export default {
 .addDia {
   width: 100%;
   max-width: 900px;
-  height: 410px;
+  height: 440px;
 }
 .mainPage {
   width: 100%;

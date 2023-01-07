@@ -74,6 +74,8 @@
       </div>
     </div>
     <div class="fullscreen backdrop" v-show="showBackdrop"></div>
+
+    <!-- edit project -->
     <q-dialog v-model="editProjectDia" persistent>
       <q-card class="editDia">
         <div class="row">
@@ -144,15 +146,85 @@
         </div>
       </q-card>
     </q-dialog>
+
+    <!-- Add new picture -->
+    <q-dialog v-model="addNewPicDia" persistent>
+      <q-card class="addNewPicDia">
+        <div class="row">
+          <div class="addPicLeft">
+            <img src="../../public/image/pic01.jpg" alt="" />
+          </div>
+          <div class="col">
+            <div class="font24 q-px-md q-pt-md">Add new picture</div>
+            <hr />
+            <div class="row">
+              <div class="col-3 q-pl-md q-pt-md">Order ID</div>
+              <div class="col-8">
+                <q-input v-model="addNewPic.orderID" dense />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-3 q-pl-md q-pt-md">Label</div>
+              <div class="col-8">
+                <q-input v-model="addNewPic.orderID" dense />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-3 q-pl-md q-pt-md">
+                <div>Filename</div>
+                <div class="font10">850x450px JPG</div>
+              </div>
+              <div class="col-8 q-pt-md">
+                <q-input
+                  v-model="addNewPic.fileName"
+                  type="file"
+                  bg-color="white"
+                  filled
+                />
+              </div>
+            </div>
+            <div class="row justify-center q-pt-lg">
+              <div>
+                <q-btn
+                  label="Cancel"
+                  outline
+                  style="width: 120px"
+                  @click="closeAddDia()"
+                />
+              </div>
+              <div style="width: 30px"></div>
+              <div>
+                <q-btn
+                  label="Save"
+                  color="teal-9"
+                  style="width: 120px"
+                  @click="saveAddDia()"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </q-card>
+    </q-dialog>
+
+    <!-- confirm delete -->
   </div>
 </template>
 
 <script>
+import axios from "axios";
 import leftMenu from "../components/leftmenu";
 export default {
   components: { leftMenu },
   data() {
     return {
+      projectId: 0,
+      addNewPicDia: false,
+      addNewPic: {
+        orderID: "",
+        label: "",
+        filename: [],
+      },
       projectData: {
         id: 1,
         name: "Param 5 bridge",
@@ -181,11 +253,45 @@ export default {
     };
   },
   methods: {
-    isActiveBtn() {
-      this.projectData.status = false;
+    async loadProjectInfo() {
+      let temp = {
+        id: this.projectId,
+      };
+      let url = this.apiPath + "projectDetail.php";
+      let res = await axios.post(url, JSON.stringify(temp));
+      this.projectData.id = this.projectId;
+      this.projectData.name = res.data[0].name;
+      this.projectData.shortURL = res.data[0].shortURL;
+      this.projectData.isPassword =
+        res.data[0].isPassword == 0 ? "-" : res.data[0].password;
+      this.projectData.startLogDate = res.data[0].loggingDate;
+      this.projectData.startLogTime = res.data[0].loggingTime;
+      this.projectData.dataDuration = res.data[0].duration;
+      this.projectData.status = res.data[0].active == "0" ? false : true;
     },
-    isInactiveBtn() {
+    async isActiveBtn() {
+      this.projectData.status = false;
+      let temp = {
+        id: this.projectId,
+        active: "0",
+      };
+      let url = this.apiPath + "projectActive.php";
+      let res = await axios.post(url, JSON.stringify(temp));
+      if (res.data == "finish") {
+        this.greenNotify("Change project status complete");
+      }
+    },
+    async isInactiveBtn() {
       this.projectData.status = true;
+      let temp = {
+        id: this.projectId,
+        active: "1",
+      };
+      let url = this.apiPath + "projectActive.php";
+      let res = await axios.post(url, JSON.stringify(temp));
+      if (res.data == "finish") {
+        this.greenNotify("Change project status complete");
+      }
     },
     editBtn() {
       this.showBackdrop = true;
@@ -196,9 +302,12 @@ export default {
       this.editProjectDia = false;
     },
   },
+  mounted() {
+    this.projectId = this.$route.params.id;
+    this.loadProjectInfo();
+  },
 };
 </script>
-
 <style lang="scss" scoped>
 .mainDiv {
   width: 100%;
@@ -229,5 +338,14 @@ export default {
 }
 .inactiveText {
   color: #de611a;
+}
+.addNewPicDia {
+  width: 100%;
+  max-width: 900px;
+  height: 320px;
+  overflow: hidden;
+}
+.addPicLeft {
+  width: 400px;
 }
 </style>
