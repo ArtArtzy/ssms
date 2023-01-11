@@ -66,17 +66,7 @@
           <div class="shorturl fontgrey">{{ item.shortURL }}</div>
           <div class="row lastLine justify-between">
             <div class="fontgrey">{{ item.loggingDate }}</div>
-            <div class="row" style="width: 80px">
-              <div>
-                <q-icon
-                  name="fa-solid fa-lock fontgrey"
-                  v-show="item.isPassword == 1"
-                ></q-icon>
-                <q-icon
-                  name="fa-solid fa-lock-open fontgrey"
-                  v-show="item.isPassword != 1"
-                ></q-icon>
-              </div>
+            <div class="row" style="width: 60px">
               <div class="q-pl-sm activeText" v-show="item.active == 1">
                 Active
               </div>
@@ -108,7 +98,7 @@
             <div class="row rowinput">
               <div class="col-4 q-pt-md">
                 <div>Short URL:</div>
-                <div class="font10">small letters no space</div>
+                <div class="font10">one word and no space</div>
               </div>
               <div class="col q-pr-md">
                 <q-input v-model="input.shorturl" dense />
@@ -124,20 +114,12 @@
                 />
               </div>
             </div>
+
             <div class="row rowinput">
               <div class="col-4 q-pt-md">
-                <q-checkbox v-model="input.isPassword" dense label="Password" />
+                <div>Start logging Date</div>
+                <div class="font10">use format dd/mm/yyyy</div>
               </div>
-              <div class="col q-pr-md">
-                <q-input
-                  v-model="input.password"
-                  dense
-                  v-show="input.isPassword"
-                />
-              </div>
-            </div>
-            <div class="row rowinput">
-              <div class="col-4 q-pt-md">Start logging Date</div>
               <div class="col q-pr-md">
                 <q-input
                   v-model="input.startLogDate"
@@ -147,7 +129,10 @@
               </div>
             </div>
             <div class="row rowinput">
-              <div class="col-4 q-pt-md">Start logging Time</div>
+              <div class="col-4 q-pt-md">
+                <div>Start logging Time</div>
+                <div class="font10">use format hh:mm</div>
+              </div>
               <div class="col q-pr-md">
                 <q-input
                   v-model="input.startLogTime"
@@ -166,11 +151,12 @@
                 />
               </div>
             </div>
-            <div class="row justify-center q-pt-md">
+            <div class="row justify-center q-pt-xl">
               <div>
                 <q-btn
                   label="Cancel"
                   outline
+                  no-caps
                   style="width: 120px"
                   @click="closeAddDia()"
                 />
@@ -180,6 +166,7 @@
                 <q-btn
                   label="Save"
                   color="teal-9"
+                  no-caps
                   style="width: 120px"
                   @click="saveAddDia()"
                 />
@@ -463,8 +450,6 @@ export default {
       input: {
         projectName: "",
         shorturl: "",
-        isPassword: true,
-        password: "",
         address: "",
         startLogDate: "",
         startLogTime: "",
@@ -609,8 +594,6 @@ export default {
       this.addProjectDia = true;
       this.input.projectName = "";
       this.input.shorturl = "";
-      this.input.isPassword = true;
-      this.input.password = "";
       this.input.address = "";
       this.input.startLogDate = "";
       this.input.startLogTime = "";

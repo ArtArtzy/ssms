@@ -5,6 +5,7 @@
     <div
       class="row q-pa-md"
       :class="{ bgselected: menu == 1, 'cursor-pointer': menu != 1 }"
+      @click="goToInfo(data.id)"
     >
       <div>
         <q-icon name="fa-solid fa-circle-info" color="white" size="24px" />
@@ -15,6 +16,7 @@
     <div
       class="row q-pa-md"
       :class="{ bgselected: menu == 2, 'cursor-pointer': menu != 2 }"
+      @click="goToSensor(data.id)"
     >
       <div>
         <q-icon
@@ -29,6 +31,7 @@
     <div
       class="row q-pa-md"
       :class="{ bgselected: menu == 3, 'cursor-pointer': menu != 3 }"
+      @click="goToReport(data.id)"
     >
       <div>
         <q-icon name="fa-regular fa-file-lines" color="white" size="24px" />
@@ -59,6 +62,15 @@ export default {
   methods: {
     backToMenu() {
       this.$router.push("/mainmenu");
+    },
+    goToInfo(id) {
+      this.$router.push("/info/" + id);
+    },
+    goToSensor(id) {
+      this.$router.push("/sensor/" + id);
+    },
+    goToReport(id) {
+      this.$router.push("/report/" + id);
     },
   },
 };
