@@ -285,8 +285,7 @@ export default {
         name: "Param 5 bridge",
         shortURL: "Param 5",
         address: "Nontraburi 11000",
-        isPassword: true,
-        password: "1234",
+
         startLogDate: "21/5/2021",
         startLogTime: "10:30",
         dataDuration: "3600",
@@ -318,8 +317,7 @@ export default {
       this.projectData.name = res.data[0].name;
       this.projectData.shortURL = res.data[0].shortURL;
       this.projectData.address = res.data[0].address;
-      this.projectData.isPassword =
-        res.data[0].isPassword == 0 ? "-" : res.data[0].password;
+
       this.projectData.startLogDate = res.data[0].loggingDate;
       this.projectData.startLogTime = res.data[0].loggingTime;
       this.projectData.dataDuration = res.data[0].duration;

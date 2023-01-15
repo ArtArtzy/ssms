@@ -210,6 +210,18 @@ export default {
         let res = await axios.post(url, JSON.stringify(temp));
         this.editPicDia = false;
         this.$emit("clickReload");
+      } else {
+        let url = this.apiPath + "editAddpic.php";
+        const formData = new FormData();
+        formData.append("id", this.data.id);
+        formData.append("orderID", this.addNewPic.orderID);
+        formData.append("label", this.addNewPic.label);
+        formData.append("fileName", this.addNewPic.fileNameNew[0].name);
+        formData.append("fileNameData", this.addNewPic.fileNameNew[0]);
+        const headers = { "Content-Type": "multipart/form-data" };
+        let res2 = await axios.post(url, formData, { headers });
+        this.editPicDia = false;
+        this.$emit("clickReload");
       }
     },
   },
