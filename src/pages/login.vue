@@ -38,7 +38,7 @@
         />
       </div>
     </div>
-    <div class="footer">Developed by Artis Software House</div>
+    <div class="footer">Developed by Artis Software House.</div>
   </div>
 </template>
 
