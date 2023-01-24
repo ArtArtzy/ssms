@@ -4,7 +4,26 @@
       <div class="leftMenu">
         <leftMenu :data="projectData" :menu="menuIndex" />
       </div>
-      <div class="col rightArea">sensor</div>
+      <div class="col rightArea">
+        <div class="row justify-between">
+          <div class="font24 q-pa-md">Sensor</div>
+
+          <div class="q-pa-md row">
+            <sensor-type />
+            <q-btn
+              label="Add new sensor"
+              outline
+              no-caps
+              class="longBtn q-mx-md"
+            />
+            <q-btn
+              label="Generate table"
+              no-caps
+              class="longBtn q-mr-md activeBtn"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -12,8 +31,9 @@
 <script>
 import axios from "axios";
 import leftMenu from "../components/leftmenu";
+import sensorType from "../components/sensortype";
 export default {
-  components: { leftMenu },
+  components: { leftMenu, sensorType },
   data() {
     return {
       projectId: 0,
