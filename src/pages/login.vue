@@ -41,7 +41,6 @@
     <div class="footer">Developed by Artis Software House.</div>
   </div>
 </template>
-
 <script>
 import axios from "axios";
 export default {

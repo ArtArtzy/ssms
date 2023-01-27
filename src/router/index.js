@@ -28,7 +28,6 @@ export default function (/* { store, ssrContext } */) {
 
   return Router
 }
-
 Vue.mixin({
   data() {
     return {
