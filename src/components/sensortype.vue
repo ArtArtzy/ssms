@@ -75,6 +75,37 @@
           <div class="leftDia">
             <img src="../../public/image/sensortype02.jpg" alt="" />
           </div>
+          <div class="col">
+            <div class="font24 q-pa-md">Add new sensor type</div>
+            <div class="q-px-md row">
+              <div class="col-3 q-pt-md">
+                <div>name</div>
+              </div>
+              <div class="col-8">
+                <q-input v-model="sensorAddTypeName" dense />
+              </div>
+            </div>
+            <div class="row justify-center q-pt-xl">
+              <div>
+                <q-btn
+                  label="Cancel"
+                  outline
+                  no-caps
+                  class="shortBtn"
+                  @click="closeAddNewType()"
+                />
+              </div>
+              <div style="width: 30px"></div>
+              <div>
+                <q-btn
+                  label="Save"
+                  class="activeBtn shortBtn"
+                  no-caps
+                  @click="addNewSensorTypeConfirm()"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </q-card>
     </q-dialog>
@@ -90,6 +121,7 @@ export default {
       sensorTypeDia: false,
       sensorList: [],
       addSensorDia: false,
+      sensorAddTypeName: "",
     };
   },
   methods: {
@@ -108,6 +140,21 @@ export default {
     sensorAddBtn() {
       this.sensorTypeDia = false;
       this.addSensorDia = true;
+      this.sensorAddTypeName = "";
+    },
+    closeAddNewType() {
+      this.addSensorDia = false;
+      this.sensorTypeDia = true;
+    },
+    async addNewSensorTypeConfirm() {
+      let temp = {
+        name: this.sensorAddTypeName,
+      };
+      let url = this.apiPath + "savesensortype.php";
+      let res = await axios.post(url, JSON.stringify(temp));
+      if (res.data == "finish") {
+        this.closeAddNewType();
+      }
     },
   },
   mounted() {
@@ -140,7 +187,7 @@ export default {
   line-height: 25px;
 }
 .addSensorDia {
-  width: 740px;
+  min-width: 740px;
   height: 230px;
   overflow: hidden;
 }
