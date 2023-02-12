@@ -10,16 +10,25 @@
 
           <div class="q-pa-md row">
             <sensor-type />
-            <q-btn
-              label="Add new sensor"
-              outline
-              no-caps
-              class="longBtn q-mx-md"
+            <add-sensor
+              class="q-px-md"
+              :projectID="projectId"
+              @clickReload="loadSensorList"
             />
             <q-btn
               label="Generate table"
               no-caps
               class="longBtn q-mr-md activeBtn"
+            />
+          </div>
+        </div>
+
+        <div class="q-pt-md row q-px-xl row">
+          <div class="col-6 q-px-md" v-for="(item, index) in sensorList">
+            <sensor-box
+              :data="item"
+              @clickReload="loadSensorList"
+              :projectID="projectId"
             />
           </div>
         </div>
@@ -32,8 +41,10 @@
 import axios from "axios";
 import leftMenu from "../components/leftmenu";
 import sensorType from "../components/sensortype";
+import addSensor from "../components/addsensor";
+import sensorBox from "../components/sensorbox";
 export default {
-  components: { leftMenu, sensorType },
+  components: { leftMenu, sensorType, addSensor, sensorBox },
   data() {
     return {
       projectId: 0,
@@ -49,6 +60,7 @@ export default {
         dataDuration: "3600",
         status: true,
       },
+      sensorList: [],
     };
   },
   methods: {
@@ -67,10 +79,22 @@ export default {
       this.projectData.dataDuration = res.data[0].duration;
       this.projectData.status = res.data[0].active == "0" ? false : true;
     },
+    async loadSensorList() {
+      let temp = {
+        id: this.projectId,
+      };
+      let url = this.apiPath + "loadsensorlist.php";
+      let res = await axios.post(url, JSON.stringify(temp));
+      let temp2 = res.data;
+      temp2.sort((a, b) => (a.name > b.name ? 1 : -1));
+
+      this.sensorList = temp2;
+    },
   },
   mounted() {
     this.projectId = this.$route.params.id;
     this.loadProjectInfo();
+    this.loadSensorList();
   },
 };
 </script>
@@ -82,5 +106,9 @@ export default {
   margin: auto;
   background-color: white;
   height: 100vh;
+}
+.rightArea {
+  height: 100vh;
+  overflow-y: auto;
 }
 </style>

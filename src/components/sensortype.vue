@@ -47,7 +47,7 @@
                 >
                   <u>Edit</u>
                 </div>
-                <div class="col-2 cursor-pointer" @click="deltype(item.id)">
+                <div class="col-2 cursor-pointer" @click="delType(item.id)">
                   <u>Delete</u>
                 </div>
               </div>
@@ -59,7 +59,7 @@
                   outline
                   no-caps
                   class="shortBtn"
-                  @click="closeEmailMainDiaBtn()"
+                  @click="closeSensorTypeMain()"
                 />
               </div>
               <div style="width: 30px"></div>
@@ -109,11 +109,87 @@
         </div>
       </q-card>
     </q-dialog>
+    <!-- sensor edit -->
+    <q-dialog v-model="editSensorDia" persistent transition-hide="flip-down">
+      <q-card class="addSensorDia">
+        <div class="row">
+          <div class="leftDia">
+            <img src="../../public/image/sensortype03.jpg" alt="" />
+          </div>
+          <div class="col">
+            <div class="font24 q-pa-md">Edit sensor type</div>
+            <div class="q-px-md row">
+              <div class="col-3 q-pt-md">
+                <div>name</div>
+              </div>
+              <div class="col-8">
+                <q-input v-model="sensorEditName" dense />
+              </div>
+            </div>
+            <div class="row justify-center q-pt-xl">
+              <div>
+                <q-btn
+                  label="Cancel"
+                  outline
+                  no-caps
+                  class="shortBtn"
+                  @click="closeEditNewType()"
+                />
+              </div>
+              <div style="width: 30px"></div>
+              <div>
+                <q-btn
+                  label="Save"
+                  class="activeBtn shortBtn"
+                  no-caps
+                  @click="editSensorTypeConfirm()"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </q-card>
+    </q-dialog>
+    <!-- sensor delete -->
+    <q-dialog v-model="delSensorTypeDia" persistent transition-hide="flip-down">
+      <q-card class="delUserDia">
+        <div class="row">
+          <div style="width: 280px">
+            <img src="../../public/image/del.jpg" alt="" />
+          </div>
+          <div class="col">
+            <div class="font24 q-pa-md">Confirm delete</div>
+            <div class="q-px-md">Do you want to delete this sensor type?</div>
+            <div class="row justify-center q-pt-xl">
+              <div>
+                <q-btn
+                  label="Cancel"
+                  outline
+                  no-caps
+                  class="shortBtn"
+                  @click="closeDelSensorDiaBtn()"
+                />
+              </div>
+              <div style="width: 30px"></div>
+              <div>
+                <q-btn
+                  label="Delete"
+                  class="activeBtn shortBtn"
+                  no-caps
+                  @click="delSensorConfirmBtn()"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+
 export default {
   data() {
     return {
@@ -122,15 +198,17 @@ export default {
       sensorList: [],
       addSensorDia: false,
       sensorAddTypeName: "",
+      sensorEditId: "",
+      sensorEditName: "",
+      editSensorDia: false,
+      delSensorTypeDia: false,
+      delSensorID: 0,
     };
   },
   methods: {
     async loadSensor() {
-      let temp = {
-        id: this.projectId,
-      };
       let url = this.apiPath + "loadSensor.php";
-      let res = await axios.post(url, JSON.stringify(temp));
+      let res = await axios.get(url);
       this.sensorList = res.data;
     },
     sensorTypeBtn() {
@@ -153,8 +231,58 @@ export default {
       let url = this.apiPath + "savesensortype.php";
       let res = await axios.post(url, JSON.stringify(temp));
       if (res.data == "finish") {
+        this.loadSensor();
+        this.greenNotify("Add new sensor type.");
         this.closeAddNewType();
       }
+    },
+    editType(id, name) {
+      this.sensorEditId = id;
+      this.sensorEditName = name;
+      this.sensorTypeDia = false;
+      this.editSensorDia = true;
+    },
+    closeEditNewType() {
+      this.editSensorDia = false;
+      this.sensorTypeDia = true;
+    },
+    async editSensorTypeConfirm() {
+      let temp = {
+        id: this.sensorEditId,
+        name: this.sensorEditName,
+      };
+      let url = this.apiPath + "editsensortype.php";
+      let res = await axios.post(url, JSON.stringify(temp));
+      if (res.data == "finish") {
+        this.loadSensor();
+        this.greenNotify("Edit sensor type complete");
+        this.closeEditNewType();
+      }
+    },
+    delType(id) {
+      this.delSensorTypeDia = true;
+      this.sensorTypeDia = false;
+      this.delSensorID = id;
+    },
+    closeDelSensorDiaBtn() {
+      this.delSensorTypeDia = false;
+      this.sensorTypeDia = true;
+    },
+    async delSensorConfirmBtn() {
+      let temp = {
+        id: this.delSensorID,
+      };
+      let url = this.apiPath + "delsensortype.php";
+      let res = await axios.post(url, JSON.stringify(temp));
+      if (res.data == "finish") {
+        this.loadSensor();
+        this.greenNotify("Delete sensor type complete");
+        this.closeDelSensorDiaBtn();
+      }
+    },
+    closeSensorTypeMain() {
+      this.showBackdrop = false;
+      this.sensorTypeDia = false;
     },
   },
   mounted() {
@@ -189,6 +317,12 @@ export default {
 .addSensorDia {
   min-width: 740px;
   height: 230px;
+  overflow: hidden;
+}
+.delUserDia {
+  width: 100%;
+  max-width: 625px;
+  height: 210px;
   overflow: hidden;
 }
 </style>
